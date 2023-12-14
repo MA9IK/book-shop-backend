@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateUserDto {
-	@ApiProperty({
-		type: String,
-		description: 'This is a required property'
-	})
-	readonly username: string
+export class LoginUserDto {
 	@ApiProperty({
 		type: String,
 		description: 'This is a required property'
@@ -16,9 +11,4 @@ export class CreateUserDto {
 		description: 'This is a required property'
 	})
 	readonly password: string
-	@ApiProperty({
-		type: String,
-		description: 'This is a required property'
-	})
-	readonly date: string
 }

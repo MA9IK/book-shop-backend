@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException
@@ -17,13 +18,14 @@ export class AuthService {
 		private jwtService: JwtService
 	) {}
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
+		if (!email || !pass) throw new BadRequestException('Bad Request')
 		const user = await this.usersService.findOne(email)
 
 		if (!user) throw new NotFoundException('User not found')
 		const { password } = user
 		const match = await bcrypt.compare(pass, password)
 
-		if (!match) throw new UnauthorizedException()
+		if (!match) throw new NotFoundException('User not found')
 
 		const payload = { sub: user._id, username: user.username }
 
