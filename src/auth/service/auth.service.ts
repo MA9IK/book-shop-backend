@@ -1,15 +1,12 @@
 import {
 	BadRequestException,
 	Injectable,
-	NotFoundException,
-	UnauthorizedException
+	NotFoundException
 } from '@nestjs/common'
 import { CreateUserDto } from 'src/users/dto/create-user.dto'
-import { IUser } from 'src/users/user.interface'
-import { UsersService } from 'src/users/users.service'
+import { UsersService } from 'src/users/service/users.service'
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
-import { JsonWebKeyInput } from 'crypto'
 
 @Injectable()
 export class AuthService {
@@ -19,7 +16,7 @@ export class AuthService {
 	) {}
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
 		if (!email || !pass) throw new BadRequestException('Bad Request')
-		const user = await this.usersService.findOne(email)
+		const user = await this.usersService.login(email)
 
 		if (!user) throw new NotFoundException('User not found')
 		const { password } = user
@@ -27,15 +24,21 @@ export class AuthService {
 
 		if (!match) throw new NotFoundException('User not found')
 
-		const payload = { sub: user._id, username: user.username }
+		const payload = { id: user._id, username: user.username, email: user.email }
 
 		return {
 			access_token: await this.jwtService.signAsync(payload)
 		}
 	}
 
-	async signUp(CreateUserDto: CreateUserDto): Promise<IUser> {
-		const newUser = await this.usersService.createNewUser(CreateUserDto)
-		return newUser
+	async signUp(
+		CreateUserDto: CreateUserDto
+	): Promise<{ access_token: string }> {
+		const user = await this.usersService.createNewUser(CreateUserDto)
+
+		const payload = { id: user._id, username: user.username }
+		return {
+			access_token: await this.jwtService.signAsync(payload)
+		}
 	}
 }

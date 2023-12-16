@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsString, MinLength } from 'class-validator'
 
-export class CreateUserDto {
+export class updateUserDto {
 	@ApiProperty({
 		type: String,
 		description: 'This is a required property'
@@ -23,9 +23,4 @@ export class CreateUserDto {
 	@IsString()
 	@MinLength(6)
 	readonly password: number
-	@ApiProperty({
-		type: String,
-		description: 'This is a required property'
-	})
-	readonly date: string
 }

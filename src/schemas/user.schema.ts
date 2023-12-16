@@ -2,19 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 
 export type UserDocument = HydratedDocument<User>
-// TODO: swagger doc
 @Schema()
 export class User {
 	@Prop({ required: true })
 	username: string
 
-	@Prop()
-	firstName: string
-
-	@Prop()
-	lastName: string
-
-	@Prop({ required: true })
+	@Prop({ unique: true, required: true, type: String })
 	email: string
 
 	@Prop({ required: true })
@@ -22,6 +15,9 @@ export class User {
 
 	@Prop({ required: true })
 	date: string
+
+	@Prop()
+	refreshToken: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

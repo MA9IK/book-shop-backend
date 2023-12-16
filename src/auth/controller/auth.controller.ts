@@ -1,34 +1,28 @@
 import {
 	Body,
 	Controller,
-	Get,
 	HttpCode,
 	HttpStatus,
-	NotFoundException,
 	Post,
 	Res
 } from '@nestjs/common'
 import { Response } from 'express'
 import { CreateUserDto } from 'src/users/dto/create-user.dto'
-import { AuthService } from './auth.service'
+import { AuthService } from '../service/auth.service'
 import {
 	ApiBadRequestResponse,
-	ApiCreatedResponse,
-	ApiForbiddenResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
-	ApiTags,
-	ApiUnprocessableEntityResponse
+	ApiTags
 } from '@nestjs/swagger'
 import { LoginUserDto } from 'src/users/dto/loginin-user.dto'
-// TODO: write doc for swagger of this methods
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
 	@HttpCode(HttpStatus.OK)
-	@ApiTags('auth')
 	@ApiOkResponse({
 		description: 'Found Succesfully'
 	})
@@ -54,7 +48,6 @@ export class AuthController {
 	}
 
 	@HttpCode(HttpStatus.OK)
-	@ApiTags('auth')
 	@ApiOkResponse({ description: 'Created Succesfully' })
 	@ApiBadRequestResponse({ description: 'Bad Request' })
 	@Post('signup')
