@@ -7,17 +7,16 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Res
+	UseGuards,
 } from '@nestjs/common'
 import { UsersService } from '../service/users.service'
 import { updateUserDto } from '../dto/update-user.dto'
 import {
-	ApiBadRequestResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiTags
 } from '@nestjs/swagger'
-import { Response } from 'express'
+import { AuthGuard } from '../auth.guard'
 
 @ApiTags('users')
 @Controller('users')
@@ -39,6 +38,7 @@ export class UserController {
 		description: 'Successfully'
 	})
 	@ApiNotFoundResponse({ description: 'User not found' })
+	@UseGuards(AuthGuard)
 	@Patch(':id')
 	update(@Param('id') id: string, @Body() updateUserDto: updateUserDto) {
 		return this.usersService.update(id, updateUserDto)

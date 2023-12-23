@@ -10,9 +10,13 @@ import { User, UserDocument } from '../../schemas/user.schema'
 import { CreateUserDto } from '../dto/create-user.dto'
 import * as bcrypt from 'bcrypt'
 import { updateUserDto } from '../dto/update-user.dto'
+import { JwtService } from '@nestjs/jwt'
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel('Users') private userModel: Model<User>) {}
+	constructor(
+		@InjectModel('Users') private userModel: Model<User>,
+		private jwtService: JwtService
+		) {}
 
 	async createNewUser(CreateUserDto: CreateUserDto): Promise<UserDocument> {
 		const newUser = new this.userModel(CreateUserDto)
@@ -64,4 +68,11 @@ export class UsersService {
 		if (!user) throw new NotFoundException('User not found')
 		return user
 	}
+
+
+	async validateToken(token: string) {
+		return this.jwtService.verify(token, {
+			secret: process.env.SECRET_KEY
+		})
+	} 
 }

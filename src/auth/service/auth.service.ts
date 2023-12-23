@@ -22,7 +22,7 @@ export class AuthService {
 		const { password } = user
 		const match = await bcrypt.compare(pass, password)
 
-		if (!match) throw new NotFoundException('User not found')
+		if (!match) throw new NotFoundException('Password isn\'t right')
 
 		const payload = { id: user._id, username: user.username, email: user.email }
 

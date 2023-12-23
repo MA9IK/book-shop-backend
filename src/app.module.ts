@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ConfigModule } from '@nestjs/config'
 import { UserSchema } from './schemas/user.schema'
@@ -15,7 +15,7 @@ import { JwtModule } from '@nestjs/jwt'
 		JwtModule.register({
 			global: true,
 			secret: process.env.SECRET_KEY,
-			signOptions: { expiresIn: '60s' }
+			signOptions: { expiresIn: '14d' }
 		}),
 		UsersModule,
 		AuthModule
@@ -23,4 +23,4 @@ import { JwtModule } from '@nestjs/jwt'
 	controllers: [],
 	providers: []
 })
-export class AppModule {}
+export class AppModule  {}
