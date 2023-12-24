@@ -4,7 +4,7 @@ import { HydratedDocument } from 'mongoose'
 export type UserDocument = HydratedDocument<User>
 @Schema()
 export class User {
-	@Prop({ required: true })
+	@Prop({ unique: true, required: true, type: String })
 	username: string
 
 	@Prop({ unique: true, required: true, type: String })

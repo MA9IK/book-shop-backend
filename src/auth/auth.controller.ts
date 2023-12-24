@@ -4,11 +4,12 @@ import {
 	HttpCode,
 	HttpStatus,
 	Post,
-	Res
+	Res,
+	UseGuards
 } from '@nestjs/common'
 import { Response } from 'express'
 import { CreateUserDto } from 'src/users/dto/create-user.dto'
-import { AuthService } from '../service/auth.service'
+import { AuthService } from './auth.service'
 import {
 	ApiBadRequestResponse,
 	ApiNotFoundResponse,
@@ -16,6 +17,7 @@ import {
 	ApiTags
 } from '@nestjs/swagger'
 import { LoginUserDto } from 'src/users/dto/loginin-user.dto'
+import { AuthGuard } from '@nestjs/passport'
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,6 +30,7 @@ export class AuthController {
 	})
 	@ApiNotFoundResponse({ description: 'User not found' })
 	@ApiBadRequestResponse({ description: 'Bad Request' })
+	@UseGuards(AuthGuard('local'))
 	@Post('signin')
 	async signIn(@Body() signInDto: LoginUserDto, @Res() res: Response) {
 		try {

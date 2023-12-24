@@ -6,35 +6,19 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { User, UserDocument } from '../../schemas/user.schema'
-import { CreateUserDto } from '../dto/create-user.dto'
-import * as bcrypt from 'bcrypt'
-import { updateUserDto } from '../dto/update-user.dto'
+import { UserDocument } from '../schemas/user.schema'
+import { updateUserDto } from './dto/update-user.dto'
 import { JwtService } from '@nestjs/jwt'
 @Injectable()
 export class UsersService {
 	constructor(
-		@InjectModel('Users') private userModel: Model<User>,
+		@InjectModel('Users') private userModel: Model<UserDocument>,
 		private jwtService: JwtService
-		) {}
-
-	async createNewUser(CreateUserDto: CreateUserDto): Promise<UserDocument> {
-		const newUser = new this.userModel(CreateUserDto)
-
-		const salt = await bcrypt.genSalt(10)
-		const hashPassword = await bcrypt.hash(newUser.password, salt)
-
-		newUser.password = hashPassword
-		return await newUser.save()
-	}
-
-	async login(email: string): Promise<UserDocument> {
-		return await this.userModel.findOne({ email })
-	}
+	) {}
 
 	async findById(id: string): Promise<UserDocument> {
 		try {
-			return await this.userModel.findById(id)
+			return this.userModel.findById(id)
 		} catch (error) {
 			console.error(error)
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
@@ -42,7 +26,14 @@ export class UsersService {
 	}
 
 	async findByUsername(username: string): Promise<UserDocument> {
-		const user = await this.userModel.findOne({ username })
+		const user = this.userModel.findOne({ username })
+
+		if (!user) throw new NotFoundException('User not found')
+		return user
+	}
+
+	async findByEmail(email: string): Promise<UserDocument> {
+		const user = this.userModel.findOne({ email })
 
 		if (!user) throw new NotFoundException('User not found')
 		return user
@@ -53,9 +44,7 @@ export class UsersService {
 		updateUserDto: updateUserDto
 	): Promise<UserDocument> {
 		try {
-			return await this.userModel
-				.findByIdAndUpdate(id, updateUserDto, { new: true })
-				.exec()
+			return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true })
 		} catch (error) {
 			console.error(error)
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
@@ -63,16 +52,15 @@ export class UsersService {
 	}
 
 	async remove(id: string): Promise<UserDocument> {
-		const user = await this.userModel.findByIdAndDelete(id).exec()
+		const user = this.userModel.findByIdAndDelete(id).exec()
 
 		if (!user) throw new NotFoundException('User not found')
 		return user
 	}
 
-
 	async validateToken(token: string) {
 		return this.jwtService.verify(token, {
 			secret: process.env.SECRET_KEY
 		})
-	} 
+	}
 }
