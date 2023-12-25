@@ -1,9 +1,11 @@
 import {
 	Body,
 	Controller,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Post,
+	Request,
 	Res,
 	UseGuards
 } from '@nestjs/common'
@@ -18,6 +20,8 @@ import {
 } from '@nestjs/swagger'
 import { LoginUserDto } from 'src/users/dto/loginin-user.dto'
 import { AuthGuard } from '@nestjs/passport'
+import { LocalAuthGuard } from './local-auth.guard'
+import { JwtAuthGuard } from './jwt-auth.guard'
 
 @ApiTags('auth')
 @Controller('auth')
@@ -30,7 +34,7 @@ export class AuthController {
 	})
 	@ApiNotFoundResponse({ description: 'User not found' })
 	@ApiBadRequestResponse({ description: 'Bad Request' })
-	@UseGuards(AuthGuard('local'))
+	@UseGuards(LocalAuthGuard)
 	@Post('signin')
 	async signIn(@Body() signInDto: LoginUserDto, @Res() res: Response) {
 		try {
@@ -66,5 +70,12 @@ export class AuthController {
 				message: 'Bad Request'
 			})
 		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('profile')
+	getProfile(@Request() req) {
+		// test
+		return req.user
 	}
 }

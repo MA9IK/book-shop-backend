@@ -15,16 +15,6 @@ export class UsersService {
 		@InjectModel('Users') private userModel: Model<UserDocument>,
 		private jwtService: JwtService
 	) {}
-
-	async findById(id: string): Promise<UserDocument> {
-		try {
-			return this.userModel.findById(id)
-		} catch (error) {
-			console.error(error)
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-		}
-	}
-
 	async findByUsername(username: string): Promise<UserDocument> {
 		const user = this.userModel.findOne({ username })
 

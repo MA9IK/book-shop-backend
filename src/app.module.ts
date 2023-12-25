@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ConfigModule } from '@nestjs/config'
 import { UserSchema } from './schemas/user.schema'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
+import { JwtMiddleware } from './users/permission.middleware'
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
@@ -17,4 +18,8 @@ import { UsersModule } from './users/users.module'
 	controllers: [],
 	providers: []
 })
-export class AppModule  {}
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(JwtMiddleware).forRoutes('users/:id')
+	}
+}

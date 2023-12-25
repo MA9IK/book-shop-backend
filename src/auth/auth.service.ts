@@ -19,14 +19,14 @@ export class AuthService {
 		private usersService: UsersService
 	) {}
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
-		if (!email || !pass) throw new BadRequestException('Bad Request')
+		// if (!email || !pass) throw new BadRequestException('Bad Request')
 		const user = await this.userModel.findOne({ email })
 
-		if (!user) throw new NotFoundException('User not found')
-		const { password } = user
-		const match = await bcrypt.compare(pass, password)
+		// if (!user) throw new NotFoundException('User not found')
+		// const { password } = user
+		// const match = await bcrypt.compare(pass, password)
 
-		if (!match) throw new NotFoundException("Password isn't right")
+		// if (!match) throw new NotFoundException("Password isn't right")
 
 		const payload = { id: user._id, username: user.username, email: user.email }
 
@@ -55,7 +55,8 @@ export class AuthService {
 	async validateUser(email: string, pass: string): Promise<any> {
 		const user = await this.usersService.findByEmail(email)
 
-		console.log(email)
+		if (!user) throw new NotFoundException()
+
 		const { password } = user
 		const match = await bcrypt.compare(pass, password)
 		if (user && match) {
