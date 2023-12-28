@@ -19,16 +19,13 @@ export class AuthService {
 		private usersService: UsersService
 	) {}
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
-		// if (!email || !pass) throw new BadRequestException('Bad Request')
 		const user = await this.userModel.findOne({ email })
 
-		// if (!user) throw new NotFoundException('User not found')
-		// const { password } = user
-		// const match = await bcrypt.compare(pass, password)
-
-		// if (!match) throw new NotFoundException("Password isn't right")
-
-		const payload = { id: user._id, username: user.username, email: user.email }
+		const payload = {
+			id: user._id,
+			username: user.username,
+			email: user.email
+		}
 
 		return {
 			access_token: await this.jwtService.signAsync(payload)
@@ -46,14 +43,18 @@ export class AuthService {
 		user.password = hashPassword
 		await user.save()
 
-		const payload = { id: user._id, username: user.username }
+		const payload = {
+			id: user._id,
+			username: user.username,
+			email: user.email
+		}
 		return {
 			access_token: await this.jwtService.signAsync(payload)
 		}
 	}
 
 	async validateUser(email: string, pass: string): Promise<any> {
-		const user = await this.usersService.findByEmail(email)
+		const user = await this.usersService.findByEmail(email) // fix here
 
 		if (!user) throw new NotFoundException()
 

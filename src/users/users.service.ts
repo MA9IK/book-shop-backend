@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	HttpException,
 	HttpStatus,
 	Injectable,
@@ -9,6 +10,8 @@ import { Model } from 'mongoose'
 import { UserDocument } from '../schemas/user.schema'
 import { updateUserDto } from './dto/update-user.dto'
 import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
+
 @Injectable()
 export class UsersService {
 	constructor(
@@ -34,10 +37,19 @@ export class UsersService {
 		updateUserDto: updateUserDto
 	): Promise<UserDocument> {
 		try {
-			return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true })
+			const user = await this.userModel.findById(id)
+			if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+
+			const salt = await bcrypt.genSalt(10)
+			const hashPassword = await bcrypt.hash(updateUserDto.password, salt)
+
+			user.password = hashPassword
+			await user.save()
+
+			return user
 		} catch (error) {
 			console.error(error)
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+			throw new BadRequestException('Something went wrong')
 		}
 	}
 

@@ -16,8 +16,8 @@ export class User {
 	@Prop({ required: true })
 	date: string
 
-	@Prop()
-	refreshToken: string
+	@Prop({ default: 'User' })
+	role: [string]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

@@ -62,7 +62,7 @@ export class AuthController {
 		try {
 			const newUser = await this.authService.signUp(signUpDto)
 
-			return res.status(HttpStatus.OK).json(newUser)
+			return res.status(HttpStatus.CREATED).json(newUser)
 		} catch (error) {
 			console.error(error)
 			return res.status(HttpStatus.BAD_REQUEST).json({
