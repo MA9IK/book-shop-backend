@@ -8,11 +8,6 @@ import { BooksService } from './books.service'
 @Controller('books')
 export class BooksController {
 	constructor(private booksService: BooksService) {}
-	@Get()
-	getBooks() {
-		return 'all books'
-	}
-
 	@Post()
 	async createBook(@Body() createBookDto: CreateBookDto, @Res() res: Response) {
 		try {

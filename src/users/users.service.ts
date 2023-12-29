@@ -3,7 +3,8 @@ import {
 	HttpException,
 	HttpStatus,
 	Injectable,
-	NotFoundException
+	NotFoundException,
+	UploadedFile
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
@@ -11,6 +12,7 @@ import { UserDocument } from '../schemas/user.schema'
 import { updateUserDto } from './dto/update-user.dto'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+import { MemoryStoredFile } from 'nestjs-form-data'
 
 @Injectable()
 export class UsersService {
@@ -38,12 +40,24 @@ export class UsersService {
 	): Promise<UserDocument> {
 		try {
 			const user = await this.userModel.findById(id)
-			if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+			if (!user) {
+				throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+			}
+			if (updateUserDto.username) {
+				user.username = updateUserDto.username
+			}
 
-			const salt = await bcrypt.genSalt(10)
-			const hashPassword = await bcrypt.hash(updateUserDto.password, salt)
-
-			user.password = hashPassword
+			if (updateUserDto.email) {
+				user.email = updateUserDto.email
+			}
+			if (updateUserDto.password) {
+				const salt = await bcrypt.genSalt(10)
+				const hashPassword = await bcrypt.hash(updateUserDto.password, salt)
+				user.password = hashPassword
+			}
+			if (updateUserDto.avatar) {
+				user.avatar = updateUserDto.avatar.buffer.toString('base64')
+			}
 			await user.save()
 
 			return user
