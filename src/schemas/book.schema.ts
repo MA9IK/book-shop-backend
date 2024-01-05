@@ -28,6 +28,8 @@ export class Book {
 	language: string
 	@Prop({ required: true, type: Number })
 	pageCount: number
+	@Prop({ required: true, type: String })
+	cover: string
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book)

@@ -52,4 +52,6 @@ export class CreateBookDto {
 	@ApiProperty({ description: 'Number of pages in the book', type: Number })
 	@IsNumber({}, { message: 'PageCount must be a number' })
 	readonly pageCount: number
+
+	readonly cover: string
 }
