@@ -10,9 +10,9 @@ export class CreateBookDto {
 	@IsString({ message: 'SubTitle must be a string' })
 	readonly subTitle: string
 
-	@ApiProperty({ description: 'Rating of the book', type: Number })
+	@ApiProperty({ description: 'Rating of the book', type: String })
 	@IsNumber({}, { message: 'Rating must be a number' })
-	readonly rating: number
+	readonly rating: string
 
 	@ApiProperty({ description: 'Description of the book', type: String })
 	@IsString({ message: 'Description must be a string' })
@@ -49,9 +49,7 @@ export class CreateBookDto {
 	@IsString({ message: 'Language must be a string' })
 	readonly language: string
 
-	@ApiProperty({ description: 'Number of pages in the book', type: Number })
+	@ApiProperty({ description: 'Number of pages in the book', type: String })
 	@IsNumber({}, { message: 'PageCount must be a number' })
-	readonly pageCount: number
-
-	readonly cover: string
+	readonly pageCount: string
 }

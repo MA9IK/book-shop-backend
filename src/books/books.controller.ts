@@ -3,11 +3,14 @@ import { ApiTags } from '@nestjs/swagger'
 import { CreateBookDto } from './dto/create-book.dto'
 import { Response } from 'express'
 import { BooksService } from './books.service'
+import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data'
 
 @ApiTags('books')
 @Controller('books')
 export class BooksController {
 	constructor(private booksService: BooksService) {}
+
+	@FormDataRequest({ storage: MemoryStoredFile })
 	@Post()
 	async createBook(@Body() createBookDto: CreateBookDto, @Res() res: Response) {
 		try {
